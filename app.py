@@ -46,12 +46,15 @@ def pdf2Img(pf):
         #print(pp)
         #pdf_images[i].save(pp,"JPG")
     images = convert_from_bytes(open(icp,'rb').read())
+    msg=[]
     for i, image in enumerate(images):
         fname = "image" + str(i) + ".png"
         print(fname)
-        image.save(fname, "PNG")    
+        image.save(fname, "PNG")
+        ui='https://linebot-openai-test-mgfj.onrender.com/static/tmp/%s' % (fname)
+        msg.append(ImageSendMessage(original_content_url=ui,preview_image_url=ui))
     print("Successfully converted PDF to image")
-    return "ok"
+    return msg
 
 def GPT_response(text):
     # 接收回應
@@ -87,11 +90,12 @@ def handle_message(event):
         tlog.write(msg)
         tlog.close()
         if 'p2i,' in msg:
-            keyword = msg.split(',')[1]
-            pdf2Img(keyword)
-        GPT_answer = GPT_response(msg)
-        print(GPT_answer)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
+            keyword = msg.split(',')[1]            
+            line_bot_api.reply_message(event.reply_token, pdf2Img(keyword))
+        else:
+           GPT_answer = GPT_response(msg)
+           print(GPT_answer)
+           line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
     except:
         print(traceback.format_exc())
         line_bot_api.reply_message(event.reply_token, TextSendMessage('你所使用的OPENAI API key額度可能已經超過，請於後台Log內確認錯誤訊息'))
