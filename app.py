@@ -34,8 +34,8 @@ def pdf2Img(pf):
     print(icp)
     pdf_images = convert_from_path(icp)
     for i in range(len(pdf_images)):
-        jp='pdf_page_%s.jpg' % (str(i+1))
-        pdf_images[i].save(jp,'JPG') #'pdf_page_'+str(i+1)+'.jpg'
+        #jp='pdf_page_%s.jpg' % (str(i+1))
+        pdf_images[i].save('pdf_page_'+str(i+1)+'.jpg','JPG') #'pdf_page_'+str(i+1)+'.jpg'
     print("Successfully converted PDF to image")
     return "ok"
 
