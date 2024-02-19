@@ -8,6 +8,8 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
+from pdf2image import convert_from_path
+
 #======python的函數庫==========
 import tempfile, os
 import datetime
@@ -27,6 +29,15 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 # OPENAI API Key初始化設定
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+def pdf2Img(pf):
+    icp='%s/%s' % (static_tmp_path,pf)
+    print(icp)
+    pdf_images = convert_from_path(icp)
+    for i in range(len(pdf_images)):
+        jp='pdf_page_%s.jpg' % (str(i+1))
+        pdf_images[i].save(jp,'JPG') #'pdf_page_'+str(i+1)+'.jpg'
+    print("Successfully converted PDF to image")
+    return "ok"
 
 def GPT_response(text):
     # 接收回應
@@ -61,6 +72,9 @@ def handle_message(event):
         tlog = open('%s/static.txt' % (static_tmp_path),"w")
         tlog.write(msg)
         tlog.close()
+        if 'p2i,' in msg:
+            keyword = msg.split(',')[1]
+            pdf2Img(keyword)
         GPT_answer = GPT_response(msg)
         print(GPT_answer)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
