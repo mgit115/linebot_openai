@@ -58,6 +58,9 @@ def callback():
 def handle_message(event):
     msg = event.message.text
     try:
+        tlog = open('%s/static.txt' % (static_tmp_path),"w")
+        tlog.write(msg)
+        tlog.close()
         GPT_answer = GPT_response(msg)
         print(GPT_answer)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
