@@ -8,7 +8,12 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
-from pdf2image import convert_from_path
+from pdf2image import convert_from_path,convert_from_bytes
+from pdf2image.exceptions import (
+PDFInfoNotInstalledError,
+PDFPageCountError,
+PDFSyntaxError
+)
 
 #======python的函數庫==========
 import tempfile, os
@@ -32,14 +37,19 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 def pdf2Img(pf):
     icp='%s/%s' % (static_tmp_path,pf)
     print(icp)
-    pdf_images = convert_from_path(icp)
-    for i in range(len(pdf_images)):
+    #pdf_images = convert_from_path(icp)
+    #for i in range(len(pdf_images)):
         #jp='pdf_page_%s.jpg' % (str(i+1))
-        jp = 'pdf_page_'+str(i+1)+'.jpg'
-        print(jp)
-        pp = '%s/%s' % (static_tmp_path,jp)
-        print(pp)
-        pdf_images[i].save(pp,"JPG")
+        #jp = 'pdf_page_'+str(i+1)+'.jpg'
+        #print(jp)
+        #pp = '%s/%s' % (static_tmp_path,jp)
+        #print(pp)
+        #pdf_images[i].save(pp,"JPG")
+    images = convert_from_bytes(open(icp,'rb').read())
+    for i, image in enumerate(images):
+        fname = "image" + str(i) + ".png"
+        print(fname)
+        image.save(fname, "PNG")    
     print("Successfully converted PDF to image")
     return "ok"
 
