@@ -39,7 +39,7 @@ def pdf2Img(pf):
         print(jp)
         pp = '%s/%s' % (static_tmp_path,jp)
         print(pp)
-        pdf_images[i].save(pp,'JPG') #'pdf_page_'+str(i+1)+'.jpg'
+        pdf_images[i].save(pp,"JPG")
     print("Successfully converted PDF to image")
     return "ok"
 
